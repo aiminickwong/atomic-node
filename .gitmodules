@@ -1,0 +1,3 @@
+[submodule "sig-atomic-buildscripts"]
+	path = sig-atomic-buildscripts
+	url = https://github.com/baude/sig-atomic-buildscripts
