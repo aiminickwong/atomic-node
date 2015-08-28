@@ -112,7 +112,7 @@ DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = ovirt-node-atomic.spec build/config.ini
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -134,7 +134,9 @@ am__can_run_installinfo = \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
-am__DIST_COMMON = $(srcdir)/Makefile.in install-sh missing py-compile
+am__DIST_COMMON = $(srcdir)/Makefile.in \
+	$(srcdir)/ovirt-node-atomic.spec.in \
+	$(top_srcdir)/build/config.ini.in install-sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -242,8 +244,8 @@ PYTHONSOURCES = \
   $(shell find scripts -name \*.py)
 
 EXTRA_DIST = \
-  node-atomic.spec.in \
-  node-atomic.spec.in
+  ovirt-node-atomic.spec.in \
+  ovirt-node-atomic.spec
 
 DISTCLEANFILES = $(PACKAGE)-$(VERSION).tar.gz \
 	aclocal.m4 \
@@ -293,6 +295,10 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
+ovirt-node-atomic.spec: $(top_builddir)/config.status $(srcdir)/ovirt-node-atomic.spec.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+build/config.ini: $(top_builddir)/config.status $(top_srcdir)/build/config.ini.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 tags TAGS:
 
 ctags CTAGS:
@@ -600,6 +606,15 @@ rpm:	srpm
 	@echo
 	@echo "rpm(s) available at '$(TMPREPOS)'"
 	@echo
+
+repos: submodule
+	cd ovirt-release/ovirt-release-3.6
+	./autogen.sh
+	./configure
+	cd -
+
+submodule:
+	git submodule update --init --recursive
 
 snapshot-rpm:
 	make rpm RELEASE_SUFFIX=".$$(date --utc +%Y%m%d).git$$(git rev-parse --short HEAD)"

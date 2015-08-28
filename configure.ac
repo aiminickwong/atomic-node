@@ -23,6 +23,10 @@ define([VERSION_FIX], [0])
 define([VERSION_NUMBER], VERSION_MAJOR[.]VERSION_MINOR[.]VERSION_FIX)
 define([VERSION_SUFFIX], [_master])
 
+define([OVIRT_VERSION_MAJOR], [3])
+define([OVIRT_VERSION_MINOR], [6])
+define([OVIRT_NODE_DISTRO], [el7])
+
 AC_INIT([atomic-node], VERSION_NUMBER[]VERSION_SUFFIX, [devel@ovirt.org])
 PACKAGE_RPM_VERSION="VERSION_NUMBER"
 PACKAGE_RPM_RELEASE="0.0.$(echo VERSION_SUFFIX | sed 's/^_//')"
@@ -38,5 +42,6 @@ AC_CHECK_PROGS([RPMBUILD], [rpmbuild])
 AM_PATH_PYTHON
 
 AC_CONFIG_FILES([Makefile
-                ])
+                ovirt-node-atomic.spec
+                build/config.ini])
 AC_OUTPUT

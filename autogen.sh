@@ -40,7 +40,7 @@ THEDIR=`pwd`
 
   test $die = 1 && exit 1
 
-  test -f node-cockpit.spec.in || {
+  test -f ovirt-node-atomic.spec.in || {
 	  echo "You must run this script in the top-level directory"
 	  exit 1
   }

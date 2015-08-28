@@ -54,6 +54,15 @@ rpm:	srpm
 	@echo "rpm(s) available at '$(TMPREPOS)'"
 	@echo
 
+repos: submodule
+	cd ovirt-release/ovirt-release-3.6
+	./autogen.sh
+	./configure
+	cd -
+
+submodule:
+	git submodule update --init --recursive
+
 snapshot-rpm:
 	make rpm RELEASE_SUFFIX=".$$(date --utc +%Y%m%d).git$$(git rev-parse --short HEAD)"
 
