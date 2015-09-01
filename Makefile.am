@@ -55,10 +55,9 @@ rpm:	srpm
 	@echo
 
 repos: submodule
-	cd ovirt-release/ovirt-release-3.6
-	./autogen.sh
-	./configure
-	cd -
+	cd ovirt-release/ovirt-release-3.6 && ./autogen.sh && ./configure
+	cp ovirt-release/ovirt-release-3.6/ovirt-release.repo build/
+	cp ovirt-release/ovirt-release-3.6/ovirt-release-
 
 submodule:
 	git submodule update --init --recursive

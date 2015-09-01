@@ -4,6 +4,7 @@ config.status
 configure
 ovirt-node-atomic.spec
 build/config.ini
-autom4te.cache*
+autom4te.cache/*
 config.log
 ovirt-release*
+Makefile.in
