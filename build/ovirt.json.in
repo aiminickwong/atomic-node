@@ -1,0 +1,9 @@
+{
+    "include": "centos-atomic-host.json",
+    "packages": [
+        "vdsm",
+        "vim",
+        "ovirt-engine"
+    ],
+    "repos": [ @OVIRT_REPOS@ ]
+}

@@ -31,14 +31,23 @@ DISTCLEANFILES = $(PACKAGE)-$(VERSION).tar.gz \
 	install-sh \
 	missing \
 	py-compile
+	build/*.repo
 
 DISTCLEANDIRS = autom4te.cache
 
 
+#DISTRO = $(shell rpm --eval '%dist' | cut -c2-)
+DISTRO = el7
 TMPREPOS = tmp.repos
 RPMBUILD_ARGS :=
 RPMBUILD_ARGS += --define="_topdir `pwd`/$(TMPREPOS)"
 RPMBUILD_ARGS += $(if $(RELEASE_SUFFIX), --define="release_suffix $$RELEASE_SUFFIX")
+LPAREN:=(
+RPAREN:=)
+#REPOCMD := grep -h '\[' build/ovirt*.repo | \
+#sed -e 's/^\[\$(LPAREN).*\$(RPAREN)\]$/"\1",/
+#REPOCMD := grep -h '\[' build/ovirt*.repo  | sed -e 's/^\[\(.*\)\]$$/"\1",/g
+REPOCMD := grep -h '\[' build/ovirt*.repo | sed -e 's/\[/"/' | sed -e 's/\]/",/'
 
 srpm:	dist
 	rm -fr "$(TMPREPOS)"
@@ -54,10 +63,24 @@ rpm:	srpm
 	@echo "rpm(s) available at '$(TMPREPOS)'"
 	@echo
 
-repos: submodule
+# sed -i -e "s#@OVIRT_REPOS@#$(REPO)#" build/config.ini
+# rm build/*.repo
+repos: configs submodule
 	cd ovirt-release/ovirt-release-3.6 && ./autogen.sh && ./configure
-	cp ovirt-release/ovirt-release-3.6/ovirt-release.repo build/
-	cp ovirt-release/ovirt-release-3.6/ovirt-release-
+	cp ovirt-release/ovirt-release-3.6/ovirt.repo build/
+	cp ovirt-release/ovirt-release-3.6/ovirt-$(DISTRO)-deps.repo build/
+	sed -i -e 's/@DIST@/$(DISTRO)/' build/ovirt*.repo
+	sed -ie 's/el7$$releasever/el7/' build/ovirt.repo
+	cp build/ovirt.json.in build/ovirt.json
+	$(eval REPOS := $(shell $(REPOCMD)))
+	sed -i -e 's/@OVIRT_REPOS@/$(REPOS)/' build/ovirt.json
+	sed -rie 's/", ]/" ]/' build/ovirt.json
+
+configs:
+	cp sig-atomic-buildscripts/*.repo build/
+	cp sig-atomic-buildscripts/config.ini build/
+	cp sig-atomic-buildscripts/centos-atomic-*.json build/
+	cat build/ovirt.ini >> build/config.ini
 
 submodule:
 	git submodule update --init --recursive

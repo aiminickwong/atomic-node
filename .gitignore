@@ -1,10 +1,14 @@
-node-cockpit.spec
 Makefile
 config.status
+config.log
 configure
 ovirt-node-atomic.spec
-build/config.ini
 autom4te.cache/*
-config.log
+py-compile
 ovirt-release*
 Makefile.in
+build/*.repo
+build/centos-atomic-*.json
+build/ovirt.json
+build/config.ini
+build/*e
